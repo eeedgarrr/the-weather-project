@@ -1,18 +1,16 @@
 import { fetchHkoData } from "../services/hko.service.js";
+import { afterEach, describe, expect, it, jest } from "@jest/globals";
 
 describe("fetchHkoData", () => {
-  const originalFetch = global.fetch;
-
   afterEach(() => {
     jest.restoreAllMocks();
-    global.fetch = originalFetch;
   });
 
   it("returns parsed JSON on success", async () => {
     const mockPayload = { ok: true, value: 123 };
-    global.fetch = jest.fn().mockResolvedValue({
+    jest.spyOn(globalThis, "fetch").mockResolvedValue({
       ok: true,
-      json: jest.fn().mockResolvedValue(mockPayload),
+      json: async () => mockPayload,
     } as unknown as Response);
 
     const data = await fetchHkoData<typeof mockPayload>({
@@ -21,11 +19,11 @@ describe("fetchHkoData", () => {
     });
 
     expect(data).toEqual(mockPayload);
-    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(globalThis.fetch).toHaveBeenCalledTimes(1);
   });
 
   it("throws tagged 502 error when network request fails", async () => {
-    global.fetch = jest.fn().mockRejectedValue(new Error("network"));
+    jest.spyOn(globalThis, "fetch").mockRejectedValue(new Error("network"));
 
     await expect(
       fetchHkoData({
@@ -40,7 +38,7 @@ describe("fetchHkoData", () => {
   });
 
   it("maps upstream 5xx to 502", async () => {
-    global.fetch = jest.fn().mockResolvedValue({
+    jest.spyOn(globalThis, "fetch").mockResolvedValue({
       ok: false,
       status: 503,
       json: jest.fn(),
@@ -59,7 +57,7 @@ describe("fetchHkoData", () => {
   });
 
   it("keeps upstream 4xx status code", async () => {
-    global.fetch = jest.fn().mockResolvedValue({
+    jest.spyOn(globalThis, "fetch").mockResolvedValue({
       ok: false,
       status: 404,
       json: jest.fn(),
