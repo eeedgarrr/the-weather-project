@@ -99,3 +99,18 @@ docker compose down
 cd server && npm run build && npm start
 cd client && npm run build && npm run preview
 ```
+
+## Self-review
+
+### What I like
+- The backend flow is simple: route -> controller -> service. It is easy to follow when reading.
+- Used HKO `flw` + `rhrread` and merged them into one endpoint for the UI, so the frontend stays simple.
+- Errors are handled in one place on the server and sent back in a consistent format.
+- The frontend now has proper loading, error, and retry states instead of only a happy path.
+- Added Docker Compose so it can run with one command.
+- Added Jest unit tests for the HKO service layer.
+
+### What I don't like / what I would improve
+- Test coverage is still thin. Right now it only covers `hko.service`; I should add controller tests and one integration-style test for `/api/weather/current`.
+- Backend is the part I’m currently focusing on improving, particularly input validation, error modeling, and integration tests.
+- Response caching (in-memory or Redis) can be implemented
