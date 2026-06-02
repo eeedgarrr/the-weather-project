@@ -1,0 +1,27 @@
+services:
+  server:
+    build:
+      context: ./server
+    container_name: weather-server
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: 3001
+      HKO_API_BASE_URL: https://data.weather.gov.hk/weatherAPI/opendata/weather.php
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+
+  client:
+    build:
+      context: ./client
+    container_name: weather-client
+    depends_on:
+      - server
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_PROXY_TARGET: http://server:3001
+    volumes:
+      - ./client:/app
+      - /app/node_modules
