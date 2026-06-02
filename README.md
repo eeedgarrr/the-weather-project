@@ -57,6 +57,15 @@ cp .env.example .env   # optional — defaults work without this
 
 To use a `.env` file, export variables before starting (e.g. `export $(grep -v '^#' .env | xargs)`), or set them in your shell. No API keys are required for HKO.
 
+Frontend environment variables are in `client/.env.example`.
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `VITE_API_BASE_URL` | empty | Base URL for deployed backend (for example Render URL) |
+| `VITE_API_PROXY_TARGET` | `http://localhost:3001` | Vite dev proxy target for local development |
+
+When `VITE_API_BASE_URL` is empty, the frontend uses relative `/api` requests.
+
 ## Run locally
 
 ```bash
@@ -99,6 +108,21 @@ docker compose down
 cd server && npm run build && npm start
 cd client && npm run build && npm run preview
 ```
+
+## Deploy
+
+### Backend (Render)
+- Root directory: `server`
+- Build command: `npm ci && npm run build`
+- Start command: `npm start`
+
+### Frontend (Vercel)
+- Root directory: `client`
+- Install command: `npm ci`
+- Build command: `npm run build`
+- Output directory: `dist`
+- Environment variable:
+  - `VITE_API_BASE_URL=https://<your-render-service>.onrender.com`
 
 ## Self-review
 

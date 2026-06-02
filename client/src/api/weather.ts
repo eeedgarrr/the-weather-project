@@ -1,13 +1,14 @@
 import type { CurrentWeather } from "../types/weather";
 import axios from "axios";
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim().replace(/\/+$/, "");
+const weatherEndpoint = `${apiBaseUrl ?? ""}/api/weather/current`;
+
 export const fetchCurrentWeather = async (): Promise<CurrentWeather> => {
   try {
-    const response = await axios.get<CurrentWeather>("/api/weather/current");
+    const response = await axios.get<CurrentWeather>(weatherEndpoint);
     return response.data;
   } catch (error) {
-    console.log("🚀 ~ fetchCurrentWeather ~ error:", error);
-
     if (axios.isAxiosError(error)) {
       // network error (no response)
       if (!error.response) {
